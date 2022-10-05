@@ -378,3 +378,15 @@ ggplot(aes(x = tmax, fill = name)) +
     ## Warning: Removed 3 rows containing non-finite values (stat_density).
 
 ![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+## Box Plot
+
+``` r
+weather_df %>% 
+ggplot(aes(x = name, y = tmax)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
