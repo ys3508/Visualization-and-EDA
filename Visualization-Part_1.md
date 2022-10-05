@@ -300,3 +300,60 @@ geom_density2d()
     ## Warning: Removed 15 rows containing non-finite values (stat_density2d).
 
 ![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
+
+``` r
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin), color = "blue")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin, color = "blue"))
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-14-2.png)<!-- -->
+In the first attempt, we’re defining the color of the points by hand; in
+the second attempt, we’re implicitly creating a color variable that has
+the value blue everywhere; ggplot is then assigning colors according to
+this variable using the default color scheme.
+
+## Histogram
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax)) + 
+  geom_histogram()
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) + 
+  geom_histogram() +
+  facet_grid(.~ name)
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+``` r
+weather_df %>% 
+ggplot(aes(x = tmax, fill = name)) + 
+  geom_histogram(position = "dodge", binwidth = 2)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->

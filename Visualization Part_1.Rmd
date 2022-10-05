@@ -150,3 +150,30 @@ ggplot(weather_df, aes(x = tmax, y = tmin)) +
 geom_density2d()
 ```
 
+```{r}
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin), color = "blue")
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin, color = "blue"))
+```
+In the first attempt, we’re defining the color of the points by hand; in the second attempt, we’re implicitly creating a color variable that has the value blue everywhere; ggplot is then assigning colors according to this variable using the default color scheme.
+
+## Histogram
+```{r}
+
+weather_df %>% 
+  ggplot(aes(x = tmax)) + 
+  geom_histogram()
+```
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmax, fill = name)) + 
+  geom_histogram() +
+  facet_grid(.~ name)
+```
+
+```{r}
+weather_df %>% 
+ggplot(aes(x = tmax, fill = name)) + 
+  geom_histogram(position = "dodge", binwidth = 2)
+```
+
