@@ -357,3 +357,24 @@ ggplot(aes(x = tmax, fill = name)) +
     ## Warning: Removed 3 rows containing non-finite values (stat_bin).
 
 ![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+## Density Plot
+
+The adjust parameter in density plots is similar to the binwidth
+parameter in histograms, and it helps to try a few values. I set the
+transparency level to .4 to make sure all densities appear. You should
+also note the distinction between fill and color aesthetics here. You
+could facet by name as above but would have to ask if that makes
+comparisons easier or harder. Lastly, adding geom_rug() to a density
+plot can be a helpful way to show the raw data in addition to the
+density.
+
+``` r
+weather_df %>% 
+ggplot(aes(x = tmax, fill = name)) + 
+  geom_density(alpha = .4, adjust = .5, color = "blue")
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
