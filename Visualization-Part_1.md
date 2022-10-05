@@ -390,3 +390,20 @@ ggplot(aes(x = name, y = tmax)) +
     ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
 
 ![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+## Trendy plots
+
+``` r
+weather_df %>% 
+ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), alpha = .5) + 
+  stat_summary(fun = "median", color = "blue")
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_summary).
+
+    ## Warning: Removed 3 rows containing missing values (geom_segment).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->

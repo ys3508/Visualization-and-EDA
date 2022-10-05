@@ -195,3 +195,16 @@ ggplot(aes(x = name, y = tmax)) +
   geom_boxplot()
 ```
 
+## Trendy plots
+```{r}
+weather_df %>% 
+ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), alpha = .5) + 
+  stat_summary(fun = "median", color = "blue")
+
+```
+
+```{r}
+
+```
+
