@@ -132,3 +132,21 @@ weather_df %>%
   geom_smooth(method = "lm", se = FALSE)
 ```
 
+## Other plots
+### Odds and ends
+
+```{r}
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_smooth(se = FALSE)
+```
+There are lots of aesthetics, and these depend to some extent on the geom – color worked for both geom_point() and geom_smooth(), but shape only applies to points. The help page for each geom includes a list of understood aesthetics.
+
+```{r}
+
+ggplot(weather_df, aes(x = tmax, y = tmin)) + 
+geom_bin2d()
+
+ggplot(weather_df, aes(x = tmax, y = tmin)) +  
+geom_density2d()
+```
+

@@ -263,3 +263,40 @@ weather_df %>%
     ## `geom_smooth()` using formula 'y ~ x'
 
 ![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+## Other plots
+
+### Odds and ends
+
+``` r
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) + 
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_smooth).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+There are lots of aesthetics, and these depend to some extent on the
+geom – color worked for both geom_point() and geom_smooth(), but shape
+only applies to points. The help page for each geom includes a list of
+understood aesthetics.
+
+``` r
+ggplot(weather_df, aes(x = tmax, y = tmin)) + 
+geom_bin2d()
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_bin2d).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+``` r
+ggplot(weather_df, aes(x = tmax, y = tmin)) +  
+geom_density2d()
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_density2d).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-13-2.png)<!-- -->
