@@ -407,3 +407,17 @@ ggplot(aes(x = name, y = tmax)) +
     ## Warning: Removed 3 rows containing missing values (geom_segment).
 
 ![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+## Ridge plots
+
+``` r
+weather_df %>% 
+ggplot(aes(x = tmax, y = name)) + 
+  geom_density_ridges(scale = .85)
+```
+
+    ## Picking joint bandwidth of 1.84
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+![](Visualization-Part_1_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
