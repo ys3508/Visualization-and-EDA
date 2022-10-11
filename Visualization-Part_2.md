@@ -278,3 +278,31 @@ ggp_temp_plot +
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+## Setting options
+
+In addition to figure sizing, I include a few other figure preferences
+in global options declared at the outset of each .Rmd file this code
+chunk just gets copy-and-pasted to the beginning of every new file.
+There are ways to set color preferences globally as well (for example,
+to use viridis color palettes.
+
+``` r
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
