@@ -84,7 +84,7 @@ weather_df
 
 ## Review Scatterplots
 
-scatterplot of tmax against tmin
+Scatterplot of tmax against tmin
 
 ``` r
 weather_df %>% 
@@ -95,3 +95,98 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+## Labels
+
+Provide informative axis labels, plot titles, and captions, all of which
+can be controlled using labs().
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  )
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+## Scale
+
+坐标轴刻度线x轴y轴：scale_x\_\* and scale_y\_\* where \* depends on the
+type of variable mapped to the x and y aesthetics (i.e. continuous vs
+discrete).
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package") + 
+  scale_x_continuous(
+    breaks = c(-15, 0, 15), 
+    labels = c("-15º C", "0", "15"))
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+### Complex Scales
+
+scale_y\_sqrt() can be added to a ggplot object to transform the Y scale
+xlim() can be used to control the plot limits in the X axis.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package") + 
+  scale_x_continuous(
+    breaks = c(-15, 0, 15), 
+    labels = c("-15ºC", "0", "15"),
+    limits = c(-20, 30)) + 
+  scale_y_continuous(
+    trans = "sqrt", 
+    position = "right")
+```
+
+    ## Warning in self$trans$transform(x): NaNs produced
+
+    ## Warning: Transformation introduced infinite values in continuous y-axis
+
+    ## Warning: Removed 90 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+arguments to scale_color_hue() control the color scale and the name in
+the plot legend.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package") + 
+    scale_color_hue(name = "Location", h = c(100, 300))
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
