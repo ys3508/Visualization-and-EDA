@@ -306,3 +306,27 @@ options(
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
+
+## Data argument in geom\_\*
+
+Depending on the setting, one way to do this is to create a “summary”
+dataframe and use that when adding a new geom to a ggplot based on the
+full data.
+
+``` r
+central_park = 
+  weather_df %>% 
+  filter(name == "CentralPark_NY")
+
+waikiki = 
+  weather_df %>% 
+  filter(name == "Waikiki_HA")
+
+ggplot(data = waikiki, aes(x = date, y = tmax, color = name)) + 
+  geom_point() + 
+  geom_line(data = central_park)
+```
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+<img src="Visualization-Part_2_files/figure-gfm/unnamed-chunk-14-1.png" width="90%" />
