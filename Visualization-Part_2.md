@@ -370,3 +370,128 @@ tmax_date_p =
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
 <img src="Visualization-Part_2_files/figure-gfm/unnamed-chunk-15-1.png" width="90%" />
+
+## Data Manipulation
+
+Data manipulation is important for the order of categorical or factor
+variables in plots. \* Categorical variables will be ordered
+alphabetically; \* Factors will follow the specified order level that
+underlies the variable labels.
+
+You can change the order level of a factor variable to your specified
+preference using forcats::fct_relevel or according to the value of
+another variable using forcats::fct_reorder.
+
+### reorder
+
+reorders name “by hand”:
+
+``` r
+weather_df %>%
+  mutate(name = forcats::fct_relevel(name, c("Waikiki_HA", "CentralPark_NY", "Waterhole_WA"))) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+<img src="Visualization-Part_2_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
+
+reorders name according to tmax values in each name:
+
+``` r
+weather_df %>%
+  mutate(name = forcats::fct_reorder(name, tmax)) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+<img src="Visualization-Part_2_files/figure-gfm/unnamed-chunk-17-1.png" width="90%" />
+
+### panel plot
+
+``` r
+weather_df %>%
+  select(name, tmax, tmin) %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation", 
+    values_to = "temp") %>% 
+  ggplot(aes(x = temp, fill = observation)) +
+  geom_density(alpha = .5) + 
+  facet_grid(~name) + 
+  viridis::scale_fill_viridis(discrete = TRUE)
+```
+
+    ## Warning: Removed 18 rows containing non-finite values (stat_density).
+
+<img src="Visualization-Part_2_files/figure-gfm/unnamed-chunk-18-1.png" width="90%" />
+
+### Other examples
+
+Some steps that are helpful in retrospect are using pivot_longer to
+organize the BDI score and visit time variables, and organizing the
+visit time variable into a factor with an informative ordering.
+
+``` r
+pulse_data = 
+  haven::read_sas("./public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  select(id, visit, everything()) %>%
+  mutate(
+    visit = recode(visit, "bl" = "00m"),
+    visit = factor(visit, levels = str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+
+ggplot(pulse_data, aes(x = visit, y = bdi)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 879 rows containing non-finite values (stat_boxplot).
+
+<img src="Visualization-Part_2_files/figure-gfm/unnamed-chunk-19-1.png" width="90%" />
+
+``` r
+#Some steps that are helpful in retrospect are using pivot_longer to organize the BDI score and visit time variables, and organizing the visit time variable into a factor with an informative ordering;
+```
+
+Here we add some data tidying steps to view pup-level outcomes
+(post-natal day on which ears “work”, on which the pup can walk, etc)
+across values of dose category and treatment day.
+
+``` r
+pup_data = 
+  read_csv("./FAS_pups.csv", col_types = "ciiiii") %>%
+  janitor::clean_names() %>%
+  mutate(sex = recode(sex, `1` = "male", `2` = "female")) 
+
+litter_data = 
+  read_csv("./FAS_litters.csv", col_types = "ccddiiii") %>%
+  janitor::clean_names() %>%
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+
+fas_data = left_join(pup_data, litter_data, by = "litter_number") 
+
+fas_data %>% 
+  select(sex, dose, day_of_tx, pd_ears:pd_walk) %>% 
+  pivot_longer(
+    pd_ears:pd_walk,
+    names_to = "outcome", 
+    values_to = "pn_day") %>% 
+  drop_na() %>% 
+  mutate(outcome = forcats::fct_reorder(outcome, pn_day, median)) %>% 
+  ggplot(aes(x = dose, y = pn_day)) + 
+  geom_violin() + 
+  facet_grid(day_of_tx ~ outcome)
+```
+
+<img src="Visualization-Part_2_files/figure-gfm/unnamed-chunk-20-1.png" width="90%" />
