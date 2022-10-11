@@ -190,3 +190,91 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+use the viridis package to create your own color scheme The
+viridis::scale_fill_viridis() function is appropriate for the fill
+aesthetic used in histograms, density plots, and elsewhere
+
+``` r
+ggp_temp_plot = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_point(aes(color = name), alpha = .5) + 
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maxiumum daily temperature (C)",
+    caption = "Data from the rnoaa package"
+  ) + 
+  viridis::scale_color_viridis(
+    name = "Location", 
+    discrete = TRUE  #discrete = TRUE because the color aesthetic is mapped to a discrete variable.if it is a continuous color gradient, omit this code;
+  )
+
+ggp_temp_plot
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+## Themes
+
+Themes are used to modify non-data elements of a plot – they don’t
+change mappings or how data are render, but control things like
+background color and location of the the legend. Using themes can help
+with general plot appearance.
+
+### legend position
+
+``` r
+ggp_temp_plot + 
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+remove ledend
+
+``` r
+ggp_temp_plot + 
+  theme(legend.position = "none")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+### Different themes
+
+While you can manage specific theme elements individually, I recommend
+using a built-in theme. By default this is theme_gray;
+
+here’s theme_bw(): Notes: The ordering of theme_bw() and theme() matters
+– theme() changes a particular element of the plot’s current “theme”. If
+you call theme to change the some element and then theme_bw(), the
+changes introduced by theme() are overwritten by theme_bw()
+
+``` r
+ggp_temp_plot + 
+  theme_bw() + 
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+theme_classic():
+
+``` r
+ggp_temp_plot + 
+  theme_classic() + 
+  theme(legend.position = "bottom")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](Visualization-Part_2_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
