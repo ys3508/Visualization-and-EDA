@@ -120,4 +120,172 @@ weather_df %>%
   janitor::tabyl(name, cold)
 ```
 
+## General summarize
+### mean(), median(), var(), sd(), mad(), IQR(), min(), and max()
+
+```{r}
+weather_df %>%
+  group_by(month) %>%
+  summarize(
+    mean_tmax = mean(tmax),
+    mean_prec = mean(prcp, na.rm = TRUE),
+    median_tmax = median(tmax),
+    sd_tmax = sd(tmax))
+```
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(
+    mean_tmax = mean(tmax),
+    median_tmax = median(tmax))
+```
+
+### summarize multiple columns 
+summarize multiple columns using the same summary, the across function is helpful.
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(across(tmin:prcp, mean))
+```
+
+### summerize + plot
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(mean_tmax = mean(tmax)) %>%
+  ggplot(aes(x = month, y = mean_tmax, color = name)) + 
+    geom_point() + geom_line() + 
+    theme(legend.position = "bottom")
+```
+
+### summerize + pivot_wider
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(mean_tmax = mean(tmax)) %>% 
+  pivot_wider(
+    names_from = name,
+    values_from = mean_tmax) %>% 
+  knitr::kable(digits = 1)
+```
+
+## Group_by + mutate
+
+Suppose you want to compare the daily max temperature to the annual average max temperature for each station separately, and to plot the result. 
+
+```{r}
+weather_df %>%
+  group_by(name) %>%
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax) %>% 
+  ggplot(aes(x = date, y = centered_tmax, color = name)) + 
+    geom_point() 
+```
+
+## Window functions
+mean() takes n inputs and produces one single output.
+
+Window functions, in contrast, take n inputs and return n outputs, and the outputs depend on all the inputs. 
+
+### min_rank
+find the max temperature ranking within month.
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  mutate(temp_ranking = min_rank(tmax))
+```
+
+keep only the day with the lowest max temperature within each month:
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  filter(min_rank(tmax) < 2)
+```
+
+keep the three days with the highest max temperature:
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  filter(min_rank(desc(tmax)) < 4)
+```
+In both of these, we’ve skipped a mutate() statement that would create a ranking variable, and gone straight to filtering based on the result.
+
+### Offsets
+
+Offsets, especially lags, are used to compare an observation to it’s previous value. 
+
+find the day-by-day change in max temperature within each station over the year:
+```{r}
+weather_df %>%
+  group_by(name) %>%
+  mutate(temp_change = tmax - lag(tmax))
+```
+
+### mean/sd
+This kind of variable might be used to quantify the day-by-day variability in max temperature, or to identify the largest one-day increase:
+```{r}
+weather_df %>%
+  group_by(name) %>%
+  mutate(temp_change = tmax - lag(tmax)) %>%
+  summarize(
+    temp_change_sd = sd(temp_change, na.rm = TRUE),
+    temp_change_max = max(temp_change, na.rm = TRUE))
+```
+
+## Limitations of Summerize 
+
+summarize() can only be used with functions that return a single-number summary. This creates a ceiling, even if it is very high. Later we’ll see how to aggregate data in a more general way, and how to perform complex operations on the resulting sub-datasets.
+
+## Revisiting examples
+
+Learning Assessment: In the PULSE data, the primary outcome is BDI score; it’s observed over follow-up visits, and we might ask if the typical BDI score values are roughly similar at each. Try to write a code chunk that imports, cleans, and summarizes the PULSE data to examine the mean and median at each visit. Export the results of this in a reader-friendly format.
+```{r}
+pulse_data = 
+  haven::read_sas("./public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  select(id, visit, everything()) %>%
+  mutate(
+    visit = replace(visit, visit == "bl", "00m"),
+    visit = factor(visit, levels = str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+
+pulse_data %>% 
+  group_by(visit) %>% 
+  summarize(
+    mean_bdi = mean(bdi, na.rm = TRUE),
+    median_bdi = median(bdi, na.rm = TRUE)) %>% 
+  knitr::kable(digits = 3) # exports it using knitr::kable.;
+```
+
+Learning Assessment: In the FAS data, there are several outcomes of interest; for now, focus on post-natal day on which a pup is able to pivot. Two predictors of interest are the dose level and the day of treatment. Produce a reader-friendly table that quantifies the possible associations between dose, day of treatment, and the ability to pivot.
+```{r}
+pup_data = 
+  read_csv("./FAS_pups.csv") %>%
+  janitor::clean_names() %>%
+  mutate(sex = recode(sex, `1` = "male", `2` = "female")) 
+
+litter_data = 
+  read_csv("./FAS_litters.csv") %>%
+  janitor::clean_names() %>%
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+
+fas_data = left_join(pup_data, litter_data, by = "litter_number") 
+
+fas_data %>% 
+  group_by(dose, day_of_tx) %>% 
+  drop_na(dose) %>% 
+  summarize(mean_pivot = mean(pd_pivot, na.rm = TRUE)) %>% 
+  pivot_wider(
+    names_from = dose, 
+    values_from = mean_pivot) %>% 
+  knitr::kable(digits = 3)
+```
 
