@@ -47,6 +47,77 @@ weather_df %>%
   group_by(name, month)
 ```
 
+## Counting things
 
+### Summarize
+```{r}
+weather_df %>%
+  group_by(month) %>%
+  summarize(n_obs = n())
+```
+
+```{r}
+weather_df %>%
+  group_by(name, month) %>%
+  summarize(n_obs = n())
+```
+
+use summarize() to compute multiple summaries within each group. As an example, we count the number of observations in each month and the number of distinct values of date in each month.
+```{r}
+weather_df %>%
+  group_by(month) %>%
+  summarize(
+    n_obs = n(),
+    n_days = n_distinct(date))
+```
+
+### count()
+To count things, you could use count() in place of group_by() and summarize() if you remember that this function exists. I’ll also make use of the name argument in count, which defaults to "n".
+
+```{r}
+weather_df %>%
+  count(month, name = "n_obs")
+```
+
+count() is a useful tidyverse alternative to Base R’s table function. Both functions produce summaries of how often values appear, but table’s output is of class table and is hard to do any additional work with, while count produces a dataframe you can use or manipulate directly. For an example, run the code below and try to do something useful with the result…
+
+```{r}
+weather_df %>%
+  pull(month) %>% 
+  table
+
+```
+
+## (2x2 tables)
+### group_by + summarize
+for categorical variables:
+look at the number of cold and not-cold days in Central Park and Waterhole.
+
+```{r}
+weather_df %>% 
+  mutate(
+    cold = case_when(
+      tmax <  5 ~ "cold",
+      tmax >= 5 ~ "not_cold",
+      TRUE      ~ ""
+  )) %>% 
+  filter(name != "Waikiki_HA") %>% 
+  group_by(name, cold) %>% 
+  summarize(count = n())
+```
+
+### pivot_wider/janitor::tabyl
+
+2x2 table using pivot_wider, or you could use janitor::tabyl
+```{r}
+weather_df %>% 
+  mutate(cold = case_when(
+    tmax <  5 ~ "cold",
+    tmax >= 5 ~ "not_cold",
+    TRUE     ~ ""
+  )) %>% 
+  filter(name != "Waikiki_HA") %>% 
+  janitor::tabyl(name, cold)
+```
 
 
