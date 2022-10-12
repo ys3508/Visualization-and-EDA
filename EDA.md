@@ -18,6 +18,9 @@ library(tidyverse) ##use ggplot 2
 library(patchwork)
 ```
 
+using dplyr verbs (group_by and summarize), along with numeric data
+summaries.
+
 ## Load NOAA weather dataset
 
 Same dataset with Visualization part 1 and part 2, the only exception is
@@ -64,11 +67,24 @@ weather_df =
 
     ## file min/max dates: 1999-09-01 / 2022-10-31
 
+## group_by
+
+Datasets are often comprised of groups defined by one or more
+(categorical) variable; group_by() makes these groupings explicit so
+that they can be included in subsequent operations.
+
+it is sometimes necessary to remove groups using ungroup().
+
+use summarize to create one-number summaries within each group, or use
+mutate to define variables within groups.
+
 ``` r
-weather_df
+weather_df %>%
+  group_by(name, month)
 ```
 
     ## # A tibble: 1,095 × 7
+    ## # Groups:   name, month [36]
     ##    name           id          date        prcp  tmax  tmin month     
     ##    <chr>          <chr>       <date>     <dbl> <dbl> <dbl> <date>    
     ##  1 CentralPark_NY USW00094728 2017-01-01     0   8.9   4.4 2017-01-01

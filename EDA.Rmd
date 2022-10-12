@@ -8,6 +8,9 @@ library(tidyverse) ##use ggplot 2
 library(patchwork)
 ```
 
+using dplyr verbs (group_by and summarize), along with numeric data summaries.
+
+
 ## Load NOAA weather dataset
 
 Same dataset with Visualization part 1 and part 2, the only exception is the addition of month variable, created using lubridate::floor_date().
@@ -29,6 +32,21 @@ weather_df =
     tmax = tmax / 10,
     month = lubridate::floor_date(date, unit = "month")) %>%
   select(name, id, everything())
-weather_df
+
 ```
+
+## group_by
+Datasets are often comprised of groups defined by one or more (categorical) variable; group_by() makes these groupings explicit so that they can be included in subsequent operations. 
+
+it is sometimes necessary to remove groups using ungroup().
+
+use summarize to create one-number summaries within each group, or use mutate to define variables within groups.
+
+```{r}
+weather_df %>%
+  group_by(name, month)
+```
+
+
+
 
